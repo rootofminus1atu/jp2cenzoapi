@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
-use axum::{response::IntoResponse, routing::get, Extension, Json, Router};
+use serde::{de::value, Deserialize, Serialize};
+use axum::{extract::{rejection::PathRejection, Path}, response::IntoResponse, routing::get, Extension, Json, Router};
 use sqlx::{query_as, PgPool};
 use tracing::info;
 
@@ -15,23 +15,37 @@ pub fn routes() -> Router {
 
 #[derive(Serialize, Deserialize, Debug, sqlx::FromRow)]
 pub struct Quote {
+    id: i64,
     quote: String,
     translation: String
 }
 
 async fn get_all(Extension(db): Extension<PgPool>) -> Result<Json<Vec<Quote>>, Error> {
-    let h = query_as::<_, Quote>("SELECT * FROM quote")
+    let quotes = query_as::<_, Quote>("SELECT * FROM quote")
         .fetch_all(&db)
         .await?;
 
-    Ok(Json(h))
+    Ok(Json(quotes))
 }
 
 
-async fn get_random(Extension(db): Extension<PgPool>) -> impl IntoResponse {
-    "random quote"
+async fn get_random(Extension(db): Extension<PgPool>) -> Result<impl IntoResponse, Error> {
+    let quote = query_as::<_, Quote>("SELECT * FROM quote ORDER BY RANDOM() LIMIT 1")
+        .fetch_one(&db)
+        .await?;
+
+    Ok(Json(quote))
 }
 
-async fn get_one(Extension(db): Extension<PgPool>) -> impl IntoResponse {
-    "one quote"
+async fn get_one(Extension(db): Extension<PgPool>, Path(quote_id): Path<String>) -> Result<impl IntoResponse, Error> {
+    let quote_id = quote_id.parse::<i64>()
+        .map_err(|_| Error::InvalidQuoteId { id: quote_id })?;
+
+    let quote = query_as::<_, Quote>("SELECT * FROM quote WHERE id = $1")
+        .bind(&quote_id)
+        .fetch_optional(&db)
+        .await?
+        .ok_or(Error::QuoteWithIdNotFound { id: quote_id })?;
+
+    Ok(Json(quote))
 }

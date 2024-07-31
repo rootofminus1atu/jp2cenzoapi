@@ -1,4 +1,5 @@
 use axum::{routing::get, Extension, Router};
+use tracing::info;
 use tracing_subscriber;
 use dotenvy::dotenv;
 use sqlx::PgPool;
@@ -16,7 +17,6 @@ async fn main() {
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
         .init();
-
 
     let db_str = std::env::var("DATABASE_URL")
         .expect("no db url found :(");
@@ -39,8 +39,7 @@ async fn main() {
         .layer(Extension(db))
         .layer(Extension(storage));
 
-    // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    tracing::info!("listening");
+    info!("listening");
     axum::serve(listener, app).await.unwrap();
 }
