@@ -15,4 +15,5 @@ sqlx = { version = "0.8.0", features = ["postgres", "migrate", "runtime-tokio-na
 reqwest = { version = "0.12.5", features = ["json"] }
 rand = "0.8.5"
 strum_macros = "0.26.4"
+askama = "0.12.1"
 

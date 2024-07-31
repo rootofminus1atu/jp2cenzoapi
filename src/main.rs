@@ -1,4 +1,4 @@
-use axum::{routing::get, Extension, Router};
+use axum::{response::IntoResponse, routing::get, Extension, Router};
 use tracing::info;
 use tracing_subscriber;
 use dotenvy::dotenv;
@@ -7,8 +7,11 @@ use sqlx::PgPool;
 pub mod api;
 pub mod error;
 pub mod storage;
+pub mod template;
+pub mod quote_form;
 
 use storage::Storage;
+use template::{HtmlTemplate, IndexTemplate}; 
 
 
 #[tokio::main]
@@ -31,10 +34,7 @@ async fn main() {
     let storage = Storage::new(bucket_id, supabase_url);
 
     let app = Router::new()
-        .route("/", get(|| async { 
-            tracing::info!("hello sent!");
-            "Hello, World!" 
-        }))
+        .route("/", get(index))
         .nest("/api", api::routes())
         .layer(Extension(db))
         .layer(Extension(storage));
@@ -42,4 +42,8 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     info!("listening");
     axum::serve(listener, app).await.unwrap();
+}
+
+async fn index() -> impl IntoResponse {
+    HtmlTemplate(IndexTemplate {})
 }

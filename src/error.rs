@@ -14,13 +14,14 @@ pub enum Error {
     InternalServerError
 }
 
+#[derive(Debug, Clone)]
 pub struct ErrorData {
     status_code: StatusCode,
     client_error_type: ClientErrorType,
     error_message: String
 }
 
-#[derive(Debug, strum_macros::AsRefStr)]
+#[derive(Debug, Copy, Clone, strum_macros::AsRefStr)]
 #[allow(non_camel_case_types)]
 pub enum ClientErrorType {
     QUOTE_NOT_FOUND,

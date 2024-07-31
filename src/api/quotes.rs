@@ -15,9 +15,9 @@ pub fn routes() -> Router {
 
 #[derive(Serialize, Deserialize, Debug, sqlx::FromRow)]
 pub struct Quote {
-    id: i64,
-    quote: String,
-    translation: String
+    pub id: i64,
+    pub quote: String,
+    pub translation: String
 }
 
 async fn get_all(Extension(db): Extension<PgPool>) -> Result<Json<Vec<Quote>>, Error> {
