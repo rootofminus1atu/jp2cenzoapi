@@ -1,18 +1,17 @@
-use axum::{response::IntoResponse, routing::get, Extension, Router};
+use axum::{routing::get, Extension, Json, Router};
+use tower_http::services::ServeDir;
 use tracing::info;
 use tracing_subscriber;
 use dotenvy::dotenv;
 use sqlx::PgPool;
+use utoipa_swagger_ui::SwaggerUi;
 
 pub mod api;
 pub mod error;
 pub mod storage;
-pub mod template;
-pub mod quote_form;
+pub mod helpers;
 
 use storage::Storage;
-use template::{HtmlTemplate, IndexTemplate}; 
-
 
 #[tokio::main]
 async fn main() {
@@ -33,17 +32,16 @@ async fn main() {
 
     let storage = Storage::new(bucket_id, supabase_url);
 
+    let openapi = api::build_openapi();
+
     let app = Router::new()
-        .route("/", get(index))
         .nest("/api", api::routes())
+        .nest_service("/", ServeDir::new("public"))
+        .merge(SwaggerUi::new("/api-docs").url("/api-docs/openapi.json", openapi))
         .layer(Extension(db))
         .layer(Extension(storage));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     info!("listening");
     axum::serve(listener, app).await.unwrap();
-}
-
-async fn index() -> impl IntoResponse {
-    HtmlTemplate(IndexTemplate {})
 }

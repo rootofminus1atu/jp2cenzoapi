@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 #[derive(Debug, Clone)]
 pub struct Storage {
@@ -14,7 +15,7 @@ impl Storage {
 }
 
 
-#[derive(Debug, sqlx::FromRow, Serialize, Deserialize)]
+#[derive(Debug, sqlx::FromRow, Serialize, Deserialize, ToSchema)]
 pub struct Object {
     name: String,
     bucket_id: String

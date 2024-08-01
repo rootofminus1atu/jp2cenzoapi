@@ -1,9 +1,10 @@
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sqlx::Error as SqlxError;
 use reqwest::Error as ReqwestError;
+use utoipa::ToSchema;
 
 #[derive(Debug, Clone, Serialize)]
 pub enum Error {
@@ -21,12 +22,24 @@ pub struct ErrorData {
     error_message: String
 }
 
-#[derive(Debug, Copy, Clone, strum_macros::AsRefStr)]
+#[derive(Debug, Copy, Clone, strum_macros::AsRefStr, ToSchema)]
 #[allow(non_camel_case_types)]
 pub enum ClientErrorType {
     QUOTE_NOT_FOUND,
     INVALID_QUOTE_ID,
     SERVICE_ERROR,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct ErrorResponse {
+    error: ErrorResponseDetails
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct ErrorResponseDetails {
+    #[serde(rename = "type")]
+    error_type: String,
+    message: String,
 }
 
 
@@ -59,12 +72,12 @@ impl IntoResponse for Error {
         println!("->> {:<12} - {self:?}", "INTO_RES");
 
         let error_data = self.error_data();
-        let body = serde_json::json!({
-            "error": {
-                "type": error_data.client_error_type.as_ref(),
-                "message": error_data.error_message,
+        let body = ErrorResponse {
+            error: ErrorResponseDetails {
+                error_type: error_data.client_error_type.as_ref().to_string(),
+                message: error_data.error_message.clone()
             }
-        });
+        };
         (error_data.status_code, Json(body)).into_response()
     }
 }
