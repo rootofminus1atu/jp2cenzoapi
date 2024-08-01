@@ -4,7 +4,6 @@ use tracing::info;
 use tracing_subscriber;
 use dotenvy::dotenv;
 use sqlx::PgPool;
-use utoipa_swagger_ui::SwaggerUi;
 
 pub mod api;
 pub mod error;
@@ -37,7 +36,7 @@ async fn main() {
     let app = Router::new()
         .nest("/api", api::routes())
         .nest_service("/", ServeDir::new("public"))
-        .merge(SwaggerUi::new("/api-docs").url("/api-docs/openapi.json", openapi))
+        .route("/openapi.json", get(|| async { Json(openapi) } ))
         .layer(Extension(db))
         .layer(Extension(storage));
 
