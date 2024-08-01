@@ -1,12 +1,13 @@
 use axum::{response::IntoResponse, routing::get, Extension, Json, Router};
-use sqlx::{query_as, PgPool};
+use sqlx::{query_as, query_scalar, PgPool};
 use utoipa::OpenApi;
-use crate::{error::Error, storage::Object, Storage};
+use crate::{error::Error, model::CountResponse, storage::Object, Storage};
 
 pub fn routes() -> Router {
     Router::new()
         .route("/", get(get_all))
         .route("/random", get(get_random))
+        .route("/count", get(get_count))
 }
 
 #[derive(OpenApi)]
@@ -55,4 +56,14 @@ async fn get_random(Extension(db): Extension<PgPool>, Extension(storage): Extens
         .to_link(&storage);
 
     Ok(Json(img_link))
+}
+
+
+async fn get_count(Extension(db): Extension<PgPool>, Extension(storage): Extension<Storage>) -> Result<impl IntoResponse, Error> {
+    let count = query_scalar("SELECT COUNT(*) FROM storage.objects WHERE bucket_id = $1")
+        .bind(&storage.bucket_id)
+        .fetch_one(&db)
+        .await?;
+
+    Ok(Json(CountResponse { count }))
 }

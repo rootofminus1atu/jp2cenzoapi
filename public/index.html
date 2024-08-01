@@ -40,6 +40,36 @@
         a:hover {
             color: #63a4ff; /* Lighter blue on hover */
         }
+
+        .quote-container {
+            background-color: #252525;
+            color: #d0d0d0;
+            padding: 10px;
+            border: 1px solid #474747;
+            margin-top: 20px;
+        }
+        .quote {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        .author {
+            font-size: 1em;
+            color: #ccc;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        .form-container button {
+            padding: 0.5rem 1rem;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #373737;
+            color: #d0d0d0;
+            border: 1px solid #454545;
+        }
+        .form-container button:hover {
+            background-color: #444444;
+        }
     </style>
     <link rel="stylesheet" href="swagger.css">
 </head>
@@ -50,10 +80,50 @@
     </div>
     <p style="margin-bottom: 0.3rem;">JP2aaS - <i>"Jan Paweł 2 as a Service"</i> - JP2 content available as an API. We serve:</p>
     <ul style="margin-top: 0.3rem;">
-        <li>Quotes</li>
-        <li>Memes</li>
+        <li id="quotes">Quotes</li>
+        <li id="images">Memes</li>
         <li>More content in the future</li>
     </ul>
     <a href="docs.html">Api docs</a>
+
+    <h2 style="padding-top: 2rem;">Example</h2>
+    <div class="form-container">
+        <button id="get-quote-btn">Random Popequote</button>
+    </div>
+    <div class="quote-container" id="quote-container" style="display: block; min-height: 4rem;">
+        <div class="quote" id="quote"></div>
+        <div class="author" id="translation"></div>
+    </div>
+
+    <script>
+        document.getElementById('get-quote-btn').addEventListener('click', async () => {
+            const response = await fetch('/api/quotes/random');
+            console.log(response)
+            const data = await response.json();
+            console.log(data)
+            document.getElementById('quote').innerText = data.quote;
+            document.getElementById('translation').innerText = `(${data.translation})`;
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await Promise.all(['quotes', 'images'].map(fetchCountFor));
+            } catch (error) {
+                console.error('Error fetching stuff:', error);
+            }
+        });
+
+        async function fetchCountFor(what) {
+            try {
+                const response = await fetch(`/api/${what}/count`);
+                const data = await response.json();
+                const elem = document.getElementById(what);
+                const text = elem.innerText;
+                elem.innerText = `${data.count} ${text}`
+            } catch (error) {
+                console.error('Error fetching quotes count:', error);
+            }
+        }
+    </script>
 </body>
 </html>

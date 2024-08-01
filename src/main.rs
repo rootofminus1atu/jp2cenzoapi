@@ -9,6 +9,7 @@ pub mod api;
 pub mod error;
 pub mod storage;
 pub mod helpers;
+pub mod model;
 
 use storage::Storage;
 

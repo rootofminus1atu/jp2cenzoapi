@@ -1,0 +1,10 @@
+small important
+- re-organize structs into a model dir
+- upload more images
+- images count
+- random image on website
+
+big 
+- mechanism for submitting images
+- special event on the website each day at 21:37
+- ???

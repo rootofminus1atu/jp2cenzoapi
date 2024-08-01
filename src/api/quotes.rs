@@ -1,14 +1,16 @@
 use serde::{Deserialize, Serialize};
 use axum::{extract::Path, response::IntoResponse, routing::get, Extension, Json, Router};
-use sqlx::{query_as, PgPool};
+use sqlx::{query_as, query_scalar, PgPool};
 use utoipa::{OpenApi, ToSchema};
 use crate::error::{Error, ErrorResponse, ErrorResponseDetails};
+use crate::model::CountResponse;
 
 
 pub fn routes() -> Router {
     Router::new()
         .route("/", get(get_all))
         .route("/random", get(get_random))
+        .route("/count", get(get_count))
         .route("/:id", get(get_one))
 }
 
@@ -87,3 +89,12 @@ async fn get_one(Extension(db): Extension<PgPool>, Path(quote_id): Path<String>)
 
     Ok(Json(quote))
 }
+
+async fn get_count(Extension(db): Extension<PgPool>) -> Result<impl IntoResponse, Error> {
+    let count = query_scalar("SELECT COUNT(*) FROM quote")
+        .fetch_one(&db)
+        .await?;
+
+    Ok(Json(CountResponse { count }))
+}
+
