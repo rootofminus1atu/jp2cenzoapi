@@ -1,129 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jp2CenzoApi</title>
-    <link rel="icon" href="favicon_io/favicon.ico" type="image/x-icon">
-    <meta name="description" content="JP2 content available as an API including quotes, memes, and more.">
-    <meta name="keywords" content="JP2aaS, JP2, JP2 Api, Jan Paweł, Jan Pawel, Jan Pawel Api, Jan Paweł Api, Jan Paweł 2, Jan Pawel 2, Jan Pawel 2 Api, Jan Paweł 2 Api, JP2 quotes, JP2 quotes API, JP2 cenzo Api, JP2 cenzo">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #101016;
-            color: #d0d0d0;
-        }
-        h1, h2 {
-            color: #e0e0e0;
-        }
-        pre {
-            background-color: #333;
-            color: #f0f0f0;
-            padding: 10px;
-            border: 1px solid #555;
-        }
-        .main-title {
-            display: flex;
-            justify-content: left;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        .papaspin {
-            width: 3rem;
-            aspect-ratio: 1;
-        }
-        a {
-            color: #1e90ff; /* Light blue color for links */
-        }
-        a:hover {
-            color: #63a4ff; /* Lighter blue on hover */
-        }
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Jp2CenzoApi</title>
+		<link rel="icon" href="favicon_io/favicon.ico" type="image/x-icon" />
+		<meta
+			name="description"
+			content="JP2 content available as an API including quotes, memes, and more."
+		/>
+		<meta
+			name="keywords"
+			content="JP2aaS, JP2, JP2 Api, Jan Paweł, Jan Pawel, Jan Pawel Api, Jan Paweł Api, Jan Paweł 2, Jan Pawel 2, Jan Pawel 2 Api, Jan Paweł 2 Api, JP2 quotes, JP2 quotes API, JP2 cenzo Api, JP2 cenzo"
+		/>
 
-        .quote-container {
-            background-color: #252525;
-            color: #d0d0d0;
-            padding: 10px;
-            border: 1px solid #474747;
-            margin-top: 20px;
-        }
-        .quote {
-            font-size: 1.2em;
-            margin-bottom: 5px;
-        }
-        .author {
-            font-size: 1em;
-            color: #ccc;
-        }
-        .form-container {
-            margin-top: 20px;
-        }
-        .form-container button {
-            padding: 0.5rem 1rem;
-            font-size: 1em;
-            cursor: pointer;
-            background-color: #373737;
-            color: #d0d0d0;
-            border: 1px solid #454545;
-        }
-        .form-container button:hover {
-            background-color: #444444;
-        }
-    </style>
-    <link rel="stylesheet" href="swagger.css">
-</head>
-<body>
-    <div class="main-title">
-        <h1>Jp2CenzoApi</h1>
-        <img src="images/papaspin.gif" alt="papaspin" class="papaspin">
-    </div>
-    <p style="margin-bottom: 0.3rem;">JP2aaS - <i>"Jan Paweł 2 as a Service"</i> - JP2 content available as an API. We serve:</p>
-    <ul style="margin-top: 0.3rem;">
-        <li id="quotes">Quotes</li>
-        <li id="images">Memes</li>
-        <li>More content in the future</li>
-    </ul>
-    <a href="docs.html">Api docs</a>
+		<link rel="stylesheet" href="swagger.css" />
+	</head>
 
-    <h2 style="padding-top: 2rem;">Example</h2>
-    <div class="form-container">
-        <button id="get-quote-btn">Random Popequote</button>
-    </div>
-    <div class="quote-container" id="quote-container" style="display: block; min-height: 4rem;">
-        <div class="quote" id="quote"></div>
-        <div class="author" id="translation"></div>
-    </div>
+	<body class="flex-col p-0 dark:bg-neutral-900">
+		<!-- NAVBAR -->
+		<nav
+			class="flex items-center p-2 pl-4 dark:bg-neutral-800 bg-neutral-200 gap-4"
+		>
+			<img src="images/papaspin.gif" alt="papaspin" class="w-10" />
+			<h1 class="dark:text-neutral-100 text-neutral-900 text-lg">
+				Jp2CenzoApi
+			</h1>
+			<div
+				class="gap-4 flex flex-row-reverse flex-1 dark:text-neutral-100 text-neutral-900"
+			>
+				<a href="docs.html">Api docs</a>
 
-    <script>
-        document.getElementById('get-quote-btn').addEventListener('click', async () => {
-            const response = await fetch('/api/quotes/random');
-            console.log(response)
-            const data = await response.json();
-            console.log(data)
-            document.getElementById('quote').innerText = data.quote;
-            document.getElementById('translation').innerText = `(${data.translation})`;
-        });
+				<a
+					class="dark:text-purple-300 text-purple-600 font-semibold"
+					href="index.html"
+					>Home</a
+				>
+			</div>
+		</nav>
+		<!--/NAVBAR -->
+		<div
+			class="flex flex-col m-6 dark:text-neutral-100 text-neutral-900 gap-6"
+		>
+			<div>
+				<p class="m-1">
+					JP2aaS - <i>"Jan Paweł 2 as a Service"</i> - JP2 content
+					available as an API. We serve:
+				</p>
+				<ul class="ml-8 list-outside list-disc">
+					<li id="quotes">Quotes</li>
+					<li id="images">Memes</li>
+					<li>More content in the future</li>
+				</ul>
+			</div>
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                await Promise.all(['quotes', 'images'].map(fetchCountFor));
-            } catch (error) {
-                console.error('Error fetching stuff:', error);
-            }
-        });
+			<div class="flex flex-col gap-2">
+				<div class="flex-row flex-1">
+					<button
+						id="get-quote-btn"
+						class="bg-purple-600 text-neutral-100 hover:bg-purple-500 border border-transparent hover:border-purple-300 p-2 rounded-md"
+					>
+						Random Popequote
+					</button>
+				</div>
+				<div
+					class="min-h-20 rounded-md shadow-sm pt-4 pb-4 pl-3 pr-3 dark:bg-neutral-800 border dark:border-neutral-700 border-neutral-200"
+					id="quote-container"
+				>
+					<div
+						class="italic text-sm dark:text-neutral-80"
+						id="translation"
+					></div>
+				</div>
+			</div>
+		</div>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script>
+			document
+				.getElementById('get-quote-btn')
+				.addEventListener('click', async () => {
+					const response = await fetch('/api/quotes/random');
+					console.log(response);
+					const data = await response.json();
+					console.log(data);
+					document.getElementById('quote').innerText = data.quote;
+					document.getElementById(
+						'translation'
+					).innerText = `(${data.translation})`;
+				});
 
-        async function fetchCountFor(what) {
-            try {
-                const response = await fetch(`/api/${what}/count`);
-                const data = await response.json();
-                const elem = document.getElementById(what);
-                const text = elem.innerText;
-                elem.innerText = `${data.count} ${text}`
-            } catch (error) {
-                console.error('Error fetching quotes count:', error);
-            }
-        }
-    </script>
-</body>
+			document.addEventListener('DOMContentLoaded', async () => {
+				try {
+					await Promise.all(['quotes', 'images'].map(fetchCountFor));
+				} catch (error) {
+					console.error('Error fetching stuff:', error);
+				}
+			});
+
+			async function fetchCountFor(what) {
+				try {
+					const response = await fetch(`/api/${what}/count`);
+					const data = await response.json();
+					const elem = document.getElementById(what);
+					const text = elem.innerText;
+					elem.innerText = `${data.count} ${text}`;
+				} catch (error) {
+					console.error('Error fetching quotes count:', error);
+				}
+			}
+		</script>
+	</body>
 </html>
