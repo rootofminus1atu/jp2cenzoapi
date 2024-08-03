@@ -54,7 +54,7 @@
 				</ul>
 			</div>
 
-			<div class="flex flex-col gap-2">
+			<div class="flex flex-col gap-3">
 				<div class="flex-row flex-1">
 					<button
 						id="get-quote-btn"
@@ -64,9 +64,13 @@
 					</button>
 				</div>
 				<div
-					class="min-h-20 rounded-md shadow-sm pt-4 pb-4 pl-3 pr-3 dark:bg-neutral-800 border dark:border-neutral-700 border-neutral-200"
+					class="min-h-20 rounded-md shadow-sm pt-3 pb-5 pl-4 pr-4 dark:bg-neutral-800 border dark:border-neutral-700 border-neutral-200"
 					id="quote-container"
 				>
+					<div
+						class="text-lg italic dark:text-neutral-80"
+						id="quote"
+					></div>
 					<div
 						class="italic text-sm dark:text-neutral-80"
 						id="translation"
@@ -83,10 +87,9 @@
 					console.log(response);
 					const data = await response.json();
 					console.log(data);
+					console.log(document.getElementById('translation-container'))
 					document.getElementById('quote').innerText = data.quote;
-					document.getElementById(
-						'translation'
-					).innerText = `(${data.translation})`;
+					document.getElementById('translation').innerText = `(${data.translation})`;
 				});
 
 			document.addEventListener('DOMContentLoaded', async () => {
