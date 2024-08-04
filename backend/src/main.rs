@@ -36,7 +36,7 @@ async fn main() {
 
     let app = Router::new()
         .nest("/api", api::routes())
-        .nest_service("/", ServeDir::new("public"))
+        .nest_service("/", ServeDir::new("dist"))
         .route("/openapi.json", get(|| async { Json(openapi) } ))
         .layer(Extension(db))
         .layer(Extension(storage));
