@@ -2,28 +2,10 @@
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
-  import { onMount } from 'svelte';
-
-
-  let quote: string = '';
-
-  async function fetchQuote() {
-    try {
-      const response = await fetch('/api/quotes/random');
-      const data = await response.json();
-      quote = `${data.quote} (${data.translation})`;
-    } catch (error) {
-      console.error('Error fetching quote:', error);
-    }
-  }
-
-  onMount(() => {
-    fetchQuote();
-  });
 </script>
 
 <main>
-  <div> 
+  <div>
     <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
       <img src={viteLogo} class="logo" alt="Vite Logo" />
     </a>
@@ -44,14 +26,6 @@
   <p class="read-the-docs">
     Click on the Vite and Svelte logos to learn more
   </p>
-
-  <div class="quote">
-    {#if quote}
-      <p>{quote}</p>
-    {:else}
-      <p>Loading...</p>
-    {/if}
-  </div>
 </main>
 
 <style>

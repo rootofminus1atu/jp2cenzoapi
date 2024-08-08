@@ -6,7 +6,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
-    "noEmit": false
+    "noEmit": true
   },
   "include": ["vite.config.ts"]
 }

@@ -20,4 +20,3 @@ Cargo.lock
 
 .env
 nogit
-dist/*
