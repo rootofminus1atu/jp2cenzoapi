@@ -29,7 +29,7 @@ pub struct ImagesApi;
     )
 )]
 async fn get_all(Extension(db): Extension<PgPool>, Extension(storage): Extension<Storage>) -> Result<impl IntoResponse, Error> {
-    let img_links = query_as::<_, Object>("SELECT * FROM storage.objects WHERE bucket_id = $1")
+    let img_links = query_as::<_, Object>("SELECT * FROM storage.objects WHERE bucket_id = $1 AND metadata->>'mimetype' != 'application/octet-stream'")
         .bind(&storage.bucket_id)
         .fetch_all(&db)
         .await?
@@ -49,7 +49,7 @@ async fn get_all(Extension(db): Extension<PgPool>, Extension(storage): Extension
     )
 )]
 async fn get_random(Extension(db): Extension<PgPool>, Extension(storage): Extension<Storage>) -> Result<impl IntoResponse, Error> {
-    let img_link = query_as::<_, Object>("SELECT * FROM storage.objects WHERE bucket_id = $1 ORDER BY RANDOM() LIMIT 1")
+    let img_link = query_as::<_, Object>("SELECT * FROM storage.objects WHERE bucket_id = $1 AND metadata->>'mimetype' != 'application/octet-stream' ORDER BY RANDOM() LIMIT 1")
         .bind(&storage.bucket_id)
         .fetch_one(&db)
         .await?
@@ -60,7 +60,7 @@ async fn get_random(Extension(db): Extension<PgPool>, Extension(storage): Extens
 
 
 async fn get_count(Extension(db): Extension<PgPool>, Extension(storage): Extension<Storage>) -> Result<impl IntoResponse, Error> {
-    let count = query_scalar("SELECT COUNT(*) FROM storage.objects WHERE bucket_id = $1")
+    let count = query_scalar("SELECT COUNT(*) FROM storage.objects WHERE bucket_id = $1 AND metadata->>'mimetype' != 'application/octet-stream'")
         .bind(&storage.bucket_id)
         .fetch_one(&db)
         .await?;
