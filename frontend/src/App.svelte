@@ -1,47 +1,60 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+	import NavBar from './NavBar.svelte';
+
+	let quote = '';
+	let translation = '';
+	async function fetchCountFor(id: string) {
+		const response = await fetch(`/api/${id}/count`);
+		const data = await response.json();
+		return data;
+	}
 </script>
 
-<main>
-  <div>
-    <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
+<NavBar></NavBar>
 
-  <div class="card">
-    <Counter />
-  </div>
+<div class="flex flex-col m-6 dark:text-neutral-100 text-neutral-900 gap-6">
+	<div>
+		<p class="m-1">
+			JP2aaS - <i>"Jan Paweł 2 as a Service"</i> - JP2 content available as
+			an API. We serve:
+		</p>
+		<ul class="ml-8 list-outside list-disc">
+			{#await fetchCountFor('quotes') then val}
+				<li>{val} Quotes</li>
+			{/await}
+			{#await fetchCountFor('images') then val}
+				<li>{val} Images</li>
+			{/await}
+			<li>More content in the future</li>
+		</ul>
+	</div>
 
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
-</main>
-
-<style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
-</style>
+	<div class="flex flex-col gap-3">
+		<div class="flex-row flex-1">
+			<button
+				id="get-quote-btn"
+				class="bg-purple-600 text-neutral-100 hover:bg-purple-500 border border-transparent hover:border-purple-300 p-2 rounded-md"
+				on:click={async () => {
+					const response = await fetch('/api/quotes/random');
+					console.log(response);
+					const data = await response.json();
+					console.log(data);
+					console.log(translation);
+					quote = data.quote;
+					translation = `(${data.translation})`;
+				}}
+			>
+				Random Popequote
+			</button>
+		</div>
+		<div
+			class="min-h-20 rounded-md shadow-sm pt-3 pb-5 pl-4 pr-4 dark:bg-neutral-800 border dark:border-neutral-700 border-neutral-200"
+			id="quote-container"
+		>
+			<p class="text-lg italic dark:text-neutral-80">
+				{quote}
+			</p>
+			<p class="italic text-sm dark:text-neutral-80">{translation}</p>
+		</div>
+	</div>
+</div>
