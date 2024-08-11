@@ -10,7 +10,7 @@
 	}
 </script>
 
-<NavBar></NavBar>
+<NavBar current="index" />
 
 <div class="flex flex-col m-6 dark:text-neutral-100 text-neutral-900 gap-6">
 	<div>

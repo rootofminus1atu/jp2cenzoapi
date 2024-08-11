@@ -2,4 +2,4 @@
 	import NavBar from './lib/NavBar.svelte';
 </script>
 
-<NavBar></NavBar>
+<NavBar current="docs" />

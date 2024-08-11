@@ -5,11 +5,15 @@
 		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Vite + Svelte + TS</title>
+
+		<link rel="stylesheet" href="/src/swagger.css" />
 	</head>
-	<body>
+	<body style="padding: 0; margin: 0">
 		<div id="app"></div>
-		<script type="module" src="/src/docs.ts"></script>
 		<div id="swagger-ui"></div>
+		<script type="module" src="/src/docs.ts"></script>
+
+		<script src="https://cdn.tailwindcss.com"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.52.0/swagger-ui-bundle.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.52.0/swagger-ui-standalone-preset.js"></script>
 		<script>
