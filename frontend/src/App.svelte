@@ -1,5 +1,5 @@
 <script lang="ts">
-	import NavBar from './NavBar.svelte';
+	import NavBar from './lib/NavBar.svelte';
 
 	let quote = '';
 	let translation = '';
