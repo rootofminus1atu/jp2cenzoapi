@@ -7,4 +7,5 @@ small important
 big 
 - mechanism for submitting images
 - special event on the website each day at 21:37
+- websocket 21:37 notifier endpoint for different timezones
 - ???
