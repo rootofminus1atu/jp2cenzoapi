@@ -1,6 +1,5 @@
 <script lang="ts">
 	import NavBar from './lib/NavBar.svelte';
-
 	let quote = '';
 	let translation = '';
 	async function fetchCountFor(id: string) {
